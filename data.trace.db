@@ -649,3 +649,11 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/ДНС/
 	at org.h2.mvstore.FileStore.open(FileStore.java:163)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:444)
 	... 59 more
+2022-06-18 00:08:34 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "FFROM" не найдена
+Table "FFROM" not found; SQL statement:
+delete ffrom lLIKES [42102-210]
+2022-06-18 00:08:40 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "LLIKES" не найдена
+Table "LLIKES" not found; SQL statement:
+delete from lLIKES [42102-210]

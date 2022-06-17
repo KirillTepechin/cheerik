@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:text="${errors}" class="margin-bottom alert-danger"></div>
+    <form action="#" th:object="${postDto}" method="post">
+        <div class="mb-3">
+            <p>Текст<Br>
+                <textarea type="text" class="form-control" id="text" th:field="${postDto.text}" required="true" name="comment" cols="40" rows="3"></textarea></p>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary button-fixed">
+                <span>Создать</span>
+            </button>
+            <a class="btn btn-secondary button-fixed" th:href="@{/profile}">
+                Назад
+            </a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

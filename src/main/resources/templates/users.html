@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<body>
+<div class="container" layout:fragment="content">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">ID</th>
+                <th scope="col">Логин</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user, iterator: ${users}">
+                <th scope="row" th:text="${iterator.index} + 1"></th>
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.login}" style="width: 60%"></td>
+                <td style="width: 10%">
+                    <div  class="btn-group" role="group" aria-label="Basic example">
+                        <a th:if="${!userSubscriptions.contains(user.id) && currentUser.id!=user.id}" class="btn btn-success button-fixed"
+                           th:href="@{/users/subscribe/{login}(login=${user.login})}">
+                           Подписаться
+                        </a>
+                        <a th:if="${userSubscriptions.contains(user.id)}" class="btn btn-danger button-fixed"
+                           th:href="@{/users/unsubscribe/{login}(login=${user.login})}">
+                            Отписаться
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <span style="float: left; padding: 5px 5px;">Страницы:</span>
+        <a th:each="page : ${pages}"
+           th:href="@{/users(page=${page}, size=${users.size})}"
+           th:text="${page}"
+           th:class="${page == users.number + 1} ? active">
+        </a>
+    </div>
+</div>
+</body>
+</html>

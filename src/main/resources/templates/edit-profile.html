@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:text="${errors}" class="margin-bottom alert-danger"></div>
+    <h5 th:text="${userDto.login}"></h5>
+    <form action="#"  th:object="${userDto}" method="post">
+        <div class="mb-3">
+            <label for="name" class="form-label">Новый пароль</label>
+            <input type="password" class="form-control" id="name" th:field="${userDto.password}" required="true">
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">
+                <span >Обновить</span>
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

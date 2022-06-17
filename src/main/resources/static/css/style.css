@@ -1,0 +1,32 @@
+.container-padding {
+    padding: 10px;
+}
+
+.margin-bottom {
+    margin-bottom: 10px;
+}
+
+.button-fixed {
+    min-width: 140px;
+}
+
+.button-sm {
+    padding: 1px;
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 5px 5px;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    background-color: gray;
+    color: white;
+    border-radius: 2px;
+}

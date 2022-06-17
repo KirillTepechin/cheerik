@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<body>
+<div class="container" layout:fragment="content">
+    <table style="width: 100%">
+        <tr th:each="post : ${posts}">
+            <div class="card custom-card text-center mr-2 mt-2 ml-2 mb-2"
+                 style="width: 15rem; display: inline-block">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${post.user.login}">Автор</h5>
+                    <p class="card-text" th:text="${post.text}">Текст</p>
+                </div>
+            </div>
+            <div>
+                <p th:each="comment : ${post?.comments}" th:text="${comment?.text}"></p>
+            </div>
+        </tr>
+    </table>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <span style="float: left; padding: 5px 5px;">Страницы:</span>
+        <a th:each="page : ${pages}"
+           th:href="@{/users(page=${page}, size=${users.size})}"
+           th:text="${page}"
+           th:class="${page == users.number + 1} ? active">
+        </a>
+    </div>
+</div>
+</body>
+</html>

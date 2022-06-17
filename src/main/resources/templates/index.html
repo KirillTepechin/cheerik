@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<body>
+<div class="container" layout:fragment="content">
+    <h1>Приветствуем на Чирике!</h1>
+    <br>
+    <h5>Ваша лента:</h5>
+    <table style="width: 100%">
+        <tr th:each="post : ${posts}">
+            <div class="card custom-card text-center mr-2 mt-2 ml-2 mb-2"
+                 style="width: 100%; display: block">
+                <div class="card-body">
+                    Автор:<h5 class="card-title" th:text="${post.user.login}"></h5>
+                    Дата:<p class="card-text" th:text="${post.date}"></p>
+                    Текст:<p class="card-text" th:text="${post.text}"></p>
+                    <i th:if="${currentUser.likes}" th:text="' '+ ${post.likes.size}" class="fa-solid fa-thumbs-up" style="color: red"></i>
+                </div>
+            </div>
+            <table style="width: 50%">
+                <i class="fa fa-comment" aria-hidden="true">Комментарии</i>
+                <tr th:each="comment : ${post?.comments}">
+                    <div class="card" style="width: 70%; display: block">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${comment.user.username}+ ' дата: ' +${comment.date}"></h5>
+                            <p class="card-text" th:text="${comment.text}"></p>
+                        </div>
+                    </div>
+                </tr>
+            </table>
+
+            <p>Добавить комментарий</p>
+            <form th:action="@{/profile/add-comment/{id}(id=${post.id})}" th:object="${commentDto}" method="post" style="width: 50%">
+                <textarea type="text" class="form-control" id="text" th:field="${commentDto.text}" required="true" cols="40" rows="3"></textarea>
+                <button class="btn btn-primary button-fixed" type="submit">
+                    Добавить
+                </button>
+            </form>
+
+        </tr>
+    </table>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <span style="float: left; padding: 5px 5px;">Страницы:</span>
+        <a th:each="page : ${pages}"
+           th:href="@{/(page=${page}, size=${posts.size})}"
+           th:text="${page}"
+           th:class="${page == posts.number + 1} ? active">
+        </a>
+    </div>
+</div>
+</body>
+</html>

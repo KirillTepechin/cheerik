@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div th:text="${errors}" class="margin-bottom alert-danger"></div>
+    <h2 th:text="'Пользователь: ' + ${userDto.login}"></h2>
+    <h3 th:text="'Подписки: ' + ${userDto.subscriptions.size} + ', Подписчики: ' + ${userDto.subscribers.size} "> </h3>
+    <br>
+    <a class="btn btn-primary button-fixed" th:href="@{profile/create-post}">
+        Написать новый пост
+    </a>
+    <br>
+    <h5>Посты:</h5>
+    <table style="width: 100%">
+        <tr th:each="post : ${posts}">
+
+            <div class="card custom-card text-center mr-2 mt-2 ml-2 mb-2"
+                 style="width: 100%; display: block;">
+                <div class="card-body">
+                    Автор:<h5 class="card-title" th:text="${post.user.login}"></h5>
+                    Дата:<p class="card-text" th:text="${post.date}"></p>
+                    Текст:<p class="card-text" th:text="${post.text}"></p>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a class="btn btn-warning button-fixed button-sm"
+                           th:href="@{/profile/edit-post/{id}(id=${post.id})}">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> Изменить
+                        </a>
+                        <button type="button" class="btn btn-danger button-fixed button-sm"
+                                th:attr="onclick=|confirm('Удалить пост?') && document.getElementById('remove-${post.id}').click()|">
+                            <i class="fa fa-trash" aria-hidden="true"></i> Удалить
+                        </button>
+                    </div>
+                    <form th:action="@{/profile/delete-post/{id}(id=${post.id})}" method="post">
+                        <button th:id="'remove-' + ${post.id}" type="submit" style="display: none">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+                <table style="width: 50%">
+                    <i class="fa fa-comment" aria-hidden="true">Комментарии</i>
+                    <tr th:each="comment : ${post?.comments}">
+                        <div class="card" style="width: 70%; display: block">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${comment.user.username}+ ' дата: ' +${comment.date}"></h5>
+                                <p class="card-text" th:text="${comment.text}"></p>
+                            </div>
+                        </div>
+                    </tr>
+                </table>
+
+                <p>Добавить комментарий</p>
+                <form th:action="@{/profile/add-comment/{id}(id=${post.id})}" th:object="${commentDto}" method="post" style="width: 50%">
+                    <textarea type="text" class="form-control" id="text" th:field="${commentDto.text}" required="true" cols="40" rows="3"></textarea>
+                    <button class="btn btn-primary button-fixed" type="submit">
+                        Добавить
+                    </button>
+                </form>
+                <br>
+        </tr>
+    </table>
+    <div th:if="${totalPages > 0}" class="pagination">
+        <span style="float: left; padding: 5px 5px;">Страницы:</span>
+        <a th:each="page : ${pages}"
+           th:href="@{/profile(page=${page}, size=${posts.size})}"
+           th:text="${page}"
+           th:class="${page == posts.number + 1} ? active">
+        </a>
+    </div>
+</div>
+</body>
+</html>

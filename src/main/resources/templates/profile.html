@@ -56,6 +56,23 @@
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${comment.user.username}+ ' дата: ' +${comment.date}"></h5>
                                 <p class="card-text" th:text="${comment.text}"></p>
+                                <div th:if="${userComments.contains(comment.id)}">
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <a class="btn btn-warning button-fixed button-sm"
+                                           th:href="@{/profile/edit-comment/{id}(id=${comment.id})}">
+                                            <i class="fa fa-pencil" aria-hidden="true"></i> Изменить
+                                        </a>
+                                        <button type="button" class="btn btn-danger button-fixed button-sm"
+                                                th:attr="onclick=|confirm('Удалить пост?') && document.getElementById('remove-${comment.id}').click()|">
+                                            <i class="fa fa-trash" aria-hidden="true"></i> Удалить
+                                        </button>
+                                    </div>
+                                    <form th:action="@{/profile/delete-comment/{id}(id=${comment.id})}" method="post">
+                                        <button th:id="'remove-' + ${comment.id}" type="submit" style="display: none">
+                                            Удалить
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </tr>

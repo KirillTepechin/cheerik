@@ -1,5 +1,6 @@
 package com.example.cheerik.service;
 
+import com.example.cheerik.dto.ReportStatsDto;
 import com.example.cheerik.model.User;
 import com.example.cheerik.repository.UserRepository;
 import com.example.cheerik.util.validation.ValidationException;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -31,6 +33,9 @@ public class UserService implements UserDetailsService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.validatorUtil = validatorUtil;
+    }
+    public List<ReportStatsDto> findReport() {
+        return userRepository.findReport();
     }
 
     public User findByLogin(String login) {

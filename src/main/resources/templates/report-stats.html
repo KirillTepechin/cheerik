@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <h5>Отчет по пользователям</h5>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Лайки</th>
+                <th scope="col">Посты</th>
+                <th scope="col">Подписки</th>
+                <th scope="col">Подписчики</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="report, iterator: ${reports}">
+                <th scope="row" th:text="${iterator.index} + 1"/>
+                <td th:text="${report.username}" style="width: 60%"/>
+                <td th:text="${report.likes}" style="width: 60%"/>
+                <td th:text="${report.posts}" style="width: 60%"/>
+                <td th:text="${report.subscribers}" style="width: 60%"/>
+                <td th:text="${report.subscriptions}" style="width: 60%"/>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

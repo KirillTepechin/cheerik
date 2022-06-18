@@ -39,8 +39,8 @@ public class CommentService {
     public Comment updateComment(CommentDto comment){
         final Comment currentComment = findComment(comment.getId());
         if(comment.getText()!=null)currentComment.setText(comment.getText());
-        if(comment.getUser()!=null) currentComment.setUser(comment.getUser());
-        if(comment.getUser()!=null) currentComment.setPost(comment.getPost());
+//        if(comment.getUser()!=null) currentComment.setUser(comment.getUser());
+//        if(comment.getUser()!=null) currentComment.setPost(comment.getPost());
         validatorUtil.validate(currentComment);
         return commentRepository.save(currentComment);
     }

@@ -18,6 +18,8 @@ public class Comment {
     @NotBlank(message = "Текст не может быть пустым!")
     private String text;
     private Date date;
+    @Version
+    private Integer version;
 
     public Comment() {
     }

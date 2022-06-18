@@ -22,6 +22,8 @@ public class Post {
     @OneToMany
     @JoinColumn(name = "post_id")
     private List<Comment> comments;
+    @Version
+    private Integer version;
 
     public Post(@NotBlank(message = "Текст не может быть пустым!") String text, Date date, User user) {
         this.text = text;

@@ -18,6 +18,8 @@ public class User{
     @NotBlank(message = "Пароль не может быть пустым!")
     @Size(min = 6, max = 64)
     private String password;
+    @Version
+    private Integer version;
 
     @ManyToMany
     @JoinTable(

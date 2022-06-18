@@ -1,7 +1,10 @@
 package com.example.cheerik.controller;
 
+import com.example.cheerik.dto.CommentDto;
 import com.example.cheerik.dto.UserDto;
+import com.example.cheerik.model.Comment;
 import com.example.cheerik.model.User;
+import com.example.cheerik.service.CommentService;
 import com.example.cheerik.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
@@ -9,12 +12,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -22,9 +24,10 @@ import java.util.stream.IntStream;
 @RequestMapping("/users")
 public class UserMvcController {
     private final UserService userService;
-
-    public UserMvcController(UserService userService) {
+    private final CommentService commentService;
+    public UserMvcController(UserService userService,CommentService commentService) {
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -42,6 +45,7 @@ public class UserMvcController {
 
         var currentUser = userService.findByLogin(userDetails.getUsername());
         var userSubscriptions= currentUser.getSubscriptions().stream().map(User::getId).toList();
+
         model.addAttribute("userSubscriptions", userSubscriptions);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("pages", pageNumbers);
@@ -72,4 +76,5 @@ public class UserMvcController {
 
         return "redirect:/users/";
     }
+
 }

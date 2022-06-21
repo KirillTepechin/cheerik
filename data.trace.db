@@ -657,3 +657,15 @@ delete ffrom lLIKES [42102-210]
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "LLIKES" не найдена
 Table "LLIKES" not found; SQL statement:
 delete from lLIKES [42102-210]
+2022-06-21 21:07:11 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Значение слишком длинное для поля "TEXT CHARACTER VARYING(255)": "U&'Figure 11. \\041f\\0430\\0440\\0430\\043c\\0435\\0442\\0440\\044b \\043f\\043e\\0434\\0441... (565)"
+Value too long for column "TEXT CHARACTER VARYING(255)": "U&'Figure 11. \\041f\\0430\\0440\\0430\\043c\\0435\\0442\\0440\\044b \\043f\\043e\\0434\\0441... (565)"; SQL statement:
+insert into post (date, text, user_id, version, id) values (?, ?, ?, ?, ?) [22001-210]
+2022-06-21 21:07:43 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Значение слишком длинное для поля "TEXT CHARACTER VARYING(255)": "U&'\\0410\\043b\\0435\\043a\\0441\\0430\\043d\\0434\\0440 \\041c\\0430\\0440\\043a\\043e\\0432\\... (1536)"
+Value too long for column "TEXT CHARACTER VARYING(255)": "U&'\\0410\\043b\\0435\\043a\\0441\\0430\\043d\\0434\\0440 \\041c\\0430\\0440\\043a\\043e\\0432\\... (1536)"; SQL statement:
+insert into post (date, text, user_id, version, id) values (?, ?, ?, ?, ?) [22001-210]
+2022-06-21 21:08:12 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Значение слишком длинное для поля "TEXT CHARACTER VARYING(255)": "U&'\\0410\\043b\\0435\\043a\\0441\\0430\\043d\\0434\\0440 \\041c\\0430\\0440\\043a\\043e\\0432\\... (429)"
+Value too long for column "TEXT CHARACTER VARYING(255)": "U&'\\0410\\043b\\0435\\043a\\0441\\0430\\043d\\0434\\0440 \\041c\\0430\\0440\\043a\\043e\\0432\\... (429)"; SQL statement:
+insert into post (date, text, user_id, version, id) values (?, ?, ?, ?, ?) [22001-210]

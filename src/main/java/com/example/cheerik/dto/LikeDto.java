@@ -11,7 +11,7 @@ public class LikeDto {
     private Long id;
     private User user;
     private Post post;
-    private int liked;
+    private boolean liked;
     private String test;
     public LikeDto() {
     }
@@ -46,11 +46,11 @@ public class LikeDto {
         this.post = post;
     }
 
-    public int getLiked() {
+    public boolean getLiked() {
         return liked;
     }
 
-    public void setLiked(int liked) {
+    public void setLiked(boolean liked) {
         this.liked = liked;
     }
 

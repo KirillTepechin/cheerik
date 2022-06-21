@@ -30,6 +30,14 @@
             </tr>
             </tbody>
         </table>
+        <div th:if="${totalPages > 0}" class="pagination">
+            <span style="float: left; padding: 5px 5px;">Страницы:</span>
+            <a th:each="page : ${pages}"
+               th:href="@{/report-stats(page=${page}, size=${reports.size})}"
+               th:text="${page}"
+               th:class="${page == reports.number + 1} ? active">
+            </a>
+        </div>
     </div>
 </div>
 </body>

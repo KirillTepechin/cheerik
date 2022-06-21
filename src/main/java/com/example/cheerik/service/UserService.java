@@ -8,6 +8,7 @@ import com.example.cheerik.util.validation.ValidatorUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,8 +35,8 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
         this.validatorUtil = validatorUtil;
     }
-    public List<ReportStatsDto> findReport() {
-        return userRepository.findReport();
+    public Page<ReportStatsDto> findReport(Pageable pageable) {
+        return userRepository.findReport(pageable);
     }
 
     public User findByLogin(String login) {

@@ -41,8 +41,15 @@ public class ReportController {
                               @AuthenticationPrincipal UserDetails userDetails,
                               Model model) {
         var user = userService.findByLogin(userDetails.getUsername());
-        final List<ReportStatsDto> reports = userService.findReport();
+        Pageable pageable = PageRequest.of(page -1,size);
+        final Page<ReportStatsDto> reports = userService.findReport(pageable);
+        final int totalPages = reports.getTotalPages();
+        final List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .toList();
 
+        model.addAttribute("pages", pageNumbers);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("user", user);
         model.addAttribute("reports", reports);
 

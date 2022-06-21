@@ -19,5 +19,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
             " select new com.example.cheerik.dto.ReportStatsDto(p.login,p.likes.size,p.posts.size,p.subscribers.size,p.subscriptions.size) " +
                     "from User p "
     )
-    List<ReportStatsDto> findReport();
+    Page<ReportStatsDto> findReport(Pageable pageable);
 }

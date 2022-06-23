@@ -8,8 +8,18 @@
 <div layout:fragment="content">
     <div th:text="${errors}" class="margin-bottom alert-danger"></div>
     <h2 th:text="'Пользователь: ' + ${userDto.login}"></h2>
-    <h3 th:text="'Подписки: ' + ${userDto.subscriptions.size} + ', Подписчики: ' + ${userDto.subscribers.size} "> </h3>
+    <div th:switch="${userDto.filename!=null}">
+        <img th:case="true" th:src="@{${'/img/' + userDto.filename}}" width="300px" height="300px" style="object-fit: cover;">
+        <img th:case="false" src="/img/default.jpg" width="300px" height="300px">
+    </div>
+    <h3>
+        <a th:href="@{profile/subscriptions}" th:text="'Подписки: ' + ${userDto.subscriptions.size} "></a>
+        <a th:href="@{profile/subscribers}" th:text="'Подписчики: ' + ${userDto.subscribers.size}  "></a>
+    </h3>
     <br>
+    <a class="btn btn-primary button-fixed" th:href="@{profile/edit-profile}">
+        Изменить данные профиля
+    </a>
     <a class="btn btn-primary button-fixed" th:href="@{profile/create-post}">
         Написать новый пост
     </a>

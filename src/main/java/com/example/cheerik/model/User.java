@@ -21,6 +21,7 @@ public class User{
     @Version
     private Integer version;
 
+    private String filename;
     @ManyToMany
     @JoinTable(
             name = "user_subscribers",
@@ -118,5 +119,21 @@ public class User{
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

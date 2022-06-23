@@ -8,10 +8,18 @@
 <div layout:fragment="content">
     <div th:text="${errors}" class="margin-bottom alert-danger"></div>
     <h5 th:text="${userDto.login}"></h5>
-    <form action="#"  th:object="${userDto}" method="post">
+    <form th:object="${userDto}" method="post" enctype="multipart/form-data">
         <div class="mb-3">
-            <label for="name" class="form-label">Новый пароль</label>
-            <input type="password" class="form-control" id="name" th:field="${userDto.password}" required="true">
+            <label for="password" class="form-label">Новый пароль</label>
+            <input type="password" class="form-control" id="password" th:field="${userDto.password}">
+        </div>
+<!--        <div class="mb-3">-->
+<!--            <label class="form-label">Название файла</label>-->
+<!--            <input type="text" class="form-control" name="name">-->
+<!--        </div>-->
+        <div class="mb-3">
+            <label class="form-label">Аватар</label>
+            <input type="file" class="form-control" name="file">
         </div>
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">

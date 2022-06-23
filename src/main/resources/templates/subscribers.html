@@ -23,11 +23,11 @@
                         <a th:text="${user.login}" th:href="@{/user/{login}(login=${user.login})}"></a>
                     </div>
                 </td>
-                <td style="width: 10%">
+                <td style="width: 15%">
                     <div  class="btn-group" role="group" aria-label="Basic example">
-                        <a th:if="${!userSubscriptions.contains(user.id) && currentUser.id!=user.id}" class="btn btn-success button-fixed"
+                        <a th:if="${!userSubscriptions.contains(user.id)}" class="btn btn-success button-fixed"
                            th:href="@{/users/subscribe/{login}(login=${user.login})}">
-                           Подписаться
+                            Подписаться в ответ
                         </a>
                         <a th:if="${userSubscriptions.contains(user.id)}" class="btn btn-danger button-fixed"
                            th:href="@{/users/unsubscribe/{login}(login=${user.login})}">

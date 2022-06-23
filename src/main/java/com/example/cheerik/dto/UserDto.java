@@ -11,6 +11,7 @@ public class UserDto {
     private final String password;
     private final Set<User> subscriptions;
     private final Set<User> subscribers;
+    private final String filename;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -18,6 +19,7 @@ public class UserDto {
         this.password = user.getPassword();
         this.subscriptions = user.getSubscriptions();
         this.subscribers = user.getSubscribers();
+        this.filename = user.getFilename();
     }
 
     public long getId() {
@@ -38,5 +40,9 @@ public class UserDto {
 
     public Set<User> getSubscribers() {
         return subscribers;
+    }
+
+    public String getFilename() {
+        return filename;
     }
 }

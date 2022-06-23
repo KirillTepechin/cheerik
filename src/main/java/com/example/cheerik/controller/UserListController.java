@@ -22,10 +22,10 @@ import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/users")
-public class UserMvcController {
+public class UserListController {
     private final UserService userService;
     private final CommentService commentService;
-    public UserMvcController(UserService userService,CommentService commentService) {
+    public UserListController(UserService userService, CommentService commentService) {
         this.userService = userService;
         this.commentService = commentService;
     }

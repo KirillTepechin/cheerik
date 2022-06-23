@@ -8,19 +8,25 @@ import com.example.cheerik.service.LikeService;
 import com.example.cheerik.service.PostService;
 import com.example.cheerik.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @Controller
@@ -34,6 +40,9 @@ public class UserProfileController {
     private CommentService commentService;
     @Autowired
     private LikeService likeService;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @GetMapping
     public String getPosts(Model model, @AuthenticationPrincipal UserDetails userDetails,
@@ -64,7 +73,8 @@ public class UserProfileController {
         return "create-post";
     }
     @PostMapping("/create-post")
-    public String createPost(@AuthenticationPrincipal UserDetails userDetails,  @ModelAttribute @Valid PostDto postDto,
+    public String createPost(@AuthenticationPrincipal UserDetails userDetails,
+                             @ModelAttribute @Valid PostDto postDto,
                              BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
@@ -115,8 +125,23 @@ public class UserProfileController {
     @PostMapping("/edit-profile")
     public String updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam String password) {
+            @RequestParam(required = false) String password,
+            @RequestParam("file") MultipartFile file) throws IOException {
         var user = userService.findByLogin(userDetails.getUsername());
+        if(file!=null){
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            user.setFilename(resultFilename);
+        }
         userService.updateUser(user, password);
         return "redirect:/profile";
     }
@@ -182,5 +207,65 @@ public class UserProfileController {
         commentService.updateComment(commentDto);
 
         return "redirect:/profile";
+    }
+    @GetMapping("subscribers")
+    public String subscribersList(@AuthenticationPrincipal UserDetails userDetails,
+                                  Model model,
+                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "5") int size){
+
+        var user = userService.findByLogin(userDetails.getUsername());
+        Pageable pageable = PageRequest.of(page-1,size,Sort.by("id").descending());
+
+        final Page<UserDto> users = new PageImpl<>(user.getSubscribers().stream().map(UserDto::new).toList(), pageable, user.getSubscribers().size());
+
+        final int totalPages = users.getTotalPages();
+        final List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .toList();
+
+        var userSubscriptions= user.getSubscriptions().stream().map(User::getId).toList();
+
+        model.addAttribute("pages", pageNumbers);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("users", users);
+        model.addAttribute("userSubscriptions", userSubscriptions);
+
+        return "subscribers";
+    }
+
+    @GetMapping("subscriptions")
+    public String subscriptionsList(@AuthenticationPrincipal UserDetails userDetails,
+                                  Model model,
+                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "5") int size){
+
+        var user = userService.findByLogin(userDetails.getUsername());
+        Pageable pageable = PageRequest.of(page-1,size,Sort.by("id").descending());
+
+        final Page<UserDto> users = new PageImpl<>(user.getSubscriptions().stream().map(UserDto::new).toList(), pageable, user.getSubscribers().size());
+
+        final int totalPages = users.getTotalPages();
+        final List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                .boxed()
+                .toList();
+
+        model.addAttribute("pages", pageNumbers);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("users", users);
+
+        return "subscriptions";
+    }
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        return new MultipartConfigElement("");
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() {
+        org.springframework.web.multipart.commons.CommonsMultipartResolver multipartResolver = new org.springframework.web.multipart.commons.CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(1000000);
+        return multipartResolver;
     }
 }

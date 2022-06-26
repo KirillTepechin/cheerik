@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 
 import javax.validation.Valid;
@@ -56,25 +59,35 @@ public class UserListController {
     @GetMapping("/subscribe/{login}")
     public String subscribe(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable String login
+            @PathVariable String login,
+            RedirectAttributes redirectAttributes,
+            @RequestHeader(required = false) String referer
     ) {
         var user = userService.findByLogin(login);
         var currentUser = userService.findByLogin(userDetails.getUsername());
         userService.subscribe(currentUser, user);
 
-        return "redirect:/users/";
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+        components.getQueryParams().forEach(redirectAttributes::addAttribute);
+
+        return "redirect:" + components.getPath();
     }
 
     @GetMapping("/unsubscribe/{login}")
     public String unsubscribe(
             @AuthenticationPrincipal UserDetails userDetails,
-            @PathVariable String login
+            @PathVariable String login,
+            RedirectAttributes redirectAttributes,
+            @RequestHeader(required = false) String referer
     ) {
         var user = userService.findByLogin(login);
         var currentUser = userService.findByLogin(userDetails.getUsername());
         userService.unsubscribe(currentUser, user);
 
-        return "redirect:/users/";
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+        components.getQueryParams().forEach(redirectAttributes::addAttribute);
+
+        return "redirect:" + components.getPath();
     }
 
 }

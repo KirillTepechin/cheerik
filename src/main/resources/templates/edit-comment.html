@@ -7,17 +7,19 @@
 <body>
 <div layout:fragment="content">
     <div th:text="${errors}" class="margin-bottom alert-danger"></div>
+    <div th:if="${param.updated}" class="alert alert-success margin-bottom">
+        Комментарий успешно изменен
+    </div>
     <form  th:object="${commentDto}" method="post">
         <div class="mb-3">
             <label for="text" class="form-label">Текст</label>
             <textarea type="text" class="form-control" id="text" th:field="${commentDto.text}" required="true" name="comment" cols="40" rows="3"></textarea>
         </div>
-
         <div class="mb-3">
             <button type="submit" class="btn btn-primary button-fixed">
                 <span th:if="${id != null}">Изменить</span>
             </button>
-            <a class="btn btn-secondary button-fixed" th:href="@{/profile}">
+            <a class="btn btn-secondary button-fixed" th:href="@{/}">
                 Назад
             </a>
         </div>

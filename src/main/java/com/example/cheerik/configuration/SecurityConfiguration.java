@@ -16,9 +16,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final Logger log = LoggerFactory.getLogger(SecurityConfiguration.class);
     private static final String LOGIN_URL = "/login";
     private final UserService userService;
 

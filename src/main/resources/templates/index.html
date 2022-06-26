@@ -35,7 +35,7 @@
                             <div th:if="${userComments.contains(comment.id)}">
                                 <div class="btn-group" role="group" aria-label="Basic example">
                                     <a class="btn btn-warning button-fixed button-sm"
-                                       th:href="@{/edit-comment/{id}(id=${comment.id})}">
+                                       th:href="@{/comment/edit-comment/{id}(id=${comment.id})}">
                                         <i class="fa fa-pencil" aria-hidden="true"></i> Изменить
                                     </a>
                                     <button type="button" class="btn btn-danger button-fixed button-sm"
@@ -43,7 +43,7 @@
                                         <i class="fa fa-trash" aria-hidden="true"></i> Удалить
                                     </button>
                                 </div>
-                                <form th:action="@{/delete-comment/{id}(id=${comment.id})}" method="post">
+                                <form th:action="@{/comment/delete-comment/{id}(id=${comment.id})}" method="post">
                                     <button th:id="'remove-' + ${comment.id}" type="submit" style="display: none">
                                         Удалить
                                     </button>
@@ -55,7 +55,7 @@
             </table>
 
             <p>Добавить комментарий</p>
-            <form th:action="@{/add-comment/{id}(id=${post.id})}" th:object="${commentDto}" method="post" style="width: 50%">
+            <form th:action="@{/comment/add-comment/{id}(id=${post.id})}" th:object="${commentDto}" method="post" style="width: 50%">
                 <textarea type="text" class="form-control" id="text" th:field="${commentDto.text}" required="true" cols="40" rows="3"></textarea>
                 <button class="btn btn-primary button-fixed" type="submit">
                     Добавить

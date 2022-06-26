@@ -17,7 +17,7 @@ public class AdviceController {
             ValidationException.class,
             CommentNotFoundException.class,
             PostNotFoundException.class,
-            CommentNotFoundException.class
+            CommentNotFoundException.class,
     })
     public ResponseEntity<Object> handleException(Throwable e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -21,7 +21,14 @@ public class UserDto {
         this.subscribers = user.getSubscribers();
         this.filename = user.getFilename();
     }
-
+    public UserDto(User user , int id) {
+        this.id = user.getId();
+        this.login = user.getUsername();
+        this.password = user.getPassword();
+        this.subscriptions = user.getSubscriptions();
+        this.subscribers = user.getSubscribers();
+        this.filename = user.getFilename();
+    }
     public long getId() {
         return id;
     }

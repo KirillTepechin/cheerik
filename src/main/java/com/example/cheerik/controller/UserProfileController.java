@@ -1,6 +1,9 @@
 package com.example.cheerik.controller;
 
-import com.example.cheerik.dto.*;
+import com.example.cheerik.dto.CommentDto;
+import com.example.cheerik.dto.LikeDto;
+import com.example.cheerik.dto.PostDto;
+import com.example.cheerik.dto.UserDto;
 import com.example.cheerik.model.Comment;
 import com.example.cheerik.model.User;
 import com.example.cheerik.service.CommentService;
@@ -8,9 +11,9 @@ import com.example.cheerik.service.LikeService;
 import com.example.cheerik.service.PostService;
 import com.example.cheerik.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.*;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -19,14 +22,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import javax.servlet.MultipartConfigElement;
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.IntStream;
 
 @Controller
@@ -41,8 +41,6 @@ public class UserProfileController {
     @Autowired
     private LikeService likeService;
 
-    @Value("${upload.path}")
-    private String uploadPath;
 
     @GetMapping
     public String getPosts(Model model, @AuthenticationPrincipal UserDetails userDetails,
@@ -88,7 +86,12 @@ public class UserProfileController {
     }
     @GetMapping("/edit-post/{id}")
     public String editPost(@PathVariable() Long id,
-                           Model model) {
+                           Model model,
+                           @AuthenticationPrincipal UserDetails userDetails) {
+        var authUser = userService.findByLogin(userDetails.getUsername());
+        if(!authUser.getComments().contains(commentService.findComment(id))){
+            throw new AccessDeniedException("Вы не являетесь автором поста");
+        }
         model.addAttribute("postId", id);
         model.addAttribute("postDto", new PostDto(postService.findPost(id)));
 
@@ -123,93 +126,17 @@ public class UserProfileController {
     }
 
     @PostMapping("/edit-profile")
-    public String updateProfile(
+    public String editProfile(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(required = false) String password,
             @RequestParam("file") MultipartFile file) throws IOException {
         var user = userService.findByLogin(userDetails.getUsername());
-        if(file!=null){
-            File uploadDir = new File(uploadPath);
-
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-
-            String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
-            file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-            user.setFilename(resultFilename);
-        }
-        userService.updateUser(user, password);
+        userService.updateUser(user, password, file);
         return "redirect:/profile";
     }
-    @PostMapping("/add-comment/{id}")
-    public String addComment(@PathVariable Long id,@AuthenticationPrincipal UserDetails userDetails,
-                             @ModelAttribute @Valid CommentDto commentDto,
-                             BindingResult bindingResult, Model model){
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            return "profile";
-        }
-        var user = userService.findByLogin(userDetails.getUsername());
-        commentDto.setPost(postService.findPost(id));
-        commentDto.setUser(user);
-        commentService.createComment(commentDto);
 
-        return "redirect:/profile";
-    }
-    @GetMapping("/like/{id}")
-    public String like(
-            @PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails,
-            @ModelAttribute @Valid LikeDto likeDto,
-            BindingResult bindingResult, Model model
-    ) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            return "profile";
-        }
-        var user = userService.findByLogin(userDetails.getUsername());
-        likeDto.setPost(postService.findPost(id));
-        likeDto.setUser(user);
-
-        if(likeService.findLike(likeDto)!=null){
-            likeService.unlike(likeDto);
-        }else{
-            likeService.like(likeDto);
-        }
-        return "redirect:/profile";
-    }
-    @PostMapping("/delete-comment/{id}")
-    public String deleteComment(@PathVariable Long id) {
-        commentService.deleteComment(id);
-        return "redirect:/profile";
-    }
-    @GetMapping("/edit-comment/{id}")
-    public String editComment(@PathVariable() Long id,
-                           Model model) {
-        model.addAttribute("commentId", id);
-        model.addAttribute("commentDto", new CommentDto(commentService.findComment(id)));
-
-        return "edit-comment";
-    }
-    @PostMapping("edit-comment/{id}")
-    public String editComment(@PathVariable() Long id,
-                           @ModelAttribute @Valid CommentDto commentDto,
-                           BindingResult bindingResult,
-                           Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            return "edit-comment";
-        }
-
-        commentService.updateComment(commentDto);
-
-        return "redirect:/profile";
-    }
     @GetMapping("subscribers")
-    public String subscribersList(@AuthenticationPrincipal UserDetails userDetails,
+    public String getSubscribersList(@AuthenticationPrincipal UserDetails userDetails,
                                   Model model,
                                   @RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "5") int size){
@@ -217,8 +144,7 @@ public class UserProfileController {
         var user = userService.findByLogin(userDetails.getUsername());
         Pageable pageable = PageRequest.of(page-1,size,Sort.by("id").descending());
 
-        final Page<UserDto> users = new PageImpl<>(user.getSubscribers().stream().map(UserDto::new).toList(), pageable, user.getSubscribers().size());
-
+        final Page<UserDto> users = userService.findSubscribers(page, size, user.getId());
         final int totalPages = users.getTotalPages();
         final List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
                 .boxed()
@@ -235,7 +161,7 @@ public class UserProfileController {
     }
 
     @GetMapping("subscriptions")
-    public String subscriptionsList(@AuthenticationPrincipal UserDetails userDetails,
+    public String getSubscriptionsList(@AuthenticationPrincipal UserDetails userDetails,
                                   Model model,
                                   @RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "5") int size){
@@ -243,7 +169,7 @@ public class UserProfileController {
         var user = userService.findByLogin(userDetails.getUsername());
         Pageable pageable = PageRequest.of(page-1,size,Sort.by("id").descending());
 
-        final Page<UserDto> users = new PageImpl<>(user.getSubscriptions().stream().map(UserDto::new).toList(), pageable, user.getSubscribers().size());
+        final Page<UserDto> users = userService.findSubscriptions(page, size, user.getId());
 
         final int totalPages = users.getTotalPages();
         final List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)

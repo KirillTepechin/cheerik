@@ -29,9 +29,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.ibm.icu.text.Transliterator;
+
 
 @Service
 public class UserService implements UserDetailsService {
@@ -40,6 +44,7 @@ public class UserService implements UserDetailsService {
     private final ValidatorUtil validatorUtil;
     @Value("${upload.path}")
     private String uploadPath;
+    public static final String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
 
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
@@ -80,7 +85,14 @@ public class UserService implements UserDetailsService {
             Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
 
             String uuidFile = UUID.randomUUID().toString();
-            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+            String resultFilename;
+            if(isCyrillic(file.getOriginalFilename())){
+                Transliterator transliterator = Transliterator.getInstance(CYRILLIC_TO_LATIN);
+                resultFilename = uuidFile + "." + transliterator.transliterate(file.getOriginalFilename());
+            }
+            else{
+                resultFilename = uuidFile + "." +file.getOriginalFilename();
+            }
 
             File newFile = new File(String.valueOf(destinationFile));
             newFile.renameTo(new File(uploadPath + "/" + resultFilename));
@@ -128,5 +140,12 @@ public class UserService implements UserDetailsService {
     public Page<UserDto> findSubscribers(int page, int size, Long id) {
         Pageable pageable = PageRequest.of(page-1,size);
         return userRepository.findSubscribers(pageable, id);
+    }
+    public boolean isCyrillic(String str){
+        String regex = "[а-яёА-ЯЁ]+";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher m = pattern.matcher(str);
+        return m.find();
     }
 }

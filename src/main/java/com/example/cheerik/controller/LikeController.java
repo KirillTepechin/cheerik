@@ -6,6 +6,9 @@ import com.example.cheerik.service.LikeService;
 import com.example.cheerik.service.PostService;
 import com.example.cheerik.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.boot.configurationprocessor.json.*;
 
 import javax.validation.Valid;
 @Controller
@@ -30,31 +34,35 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @GetMapping("/{id}")
-    public String like(
-            @PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails,
-            @ModelAttribute @Valid LikeDto likeDto,
-            BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes,
-            @RequestHeader(required = false) String referer
-    ) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
-            return "profile";
-        }
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> like( @AuthenticationPrincipal UserDetails userDetails,
+                                        @RequestBody String body) throws JSONException {
+
+        JSONObject request = new JSONObject(body);
+        String id = request.getString("id");
+
         var user = userService.findByLogin(userDetails.getUsername());
-        likeDto.setPost(postService.findPost(id));
+        var likeDto = new LikeDto();
+        likeDto.setPost(postService.findPost(Long.parseLong(id)));
         likeDto.setUser(user);
 
+        JSONObject response = new JSONObject();
         if(likeService.findLike(likeDto)!=null){
             likeService.unlike(likeDto);
+            response.put("color","grey");
         }else{
             likeService.like(likeDto);
+            response.put("color","red");
         }
-        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+        int count = postService.findPost(Long.parseLong(id)).getLikes().size();
+        response.put("count",count);
 
-        components.getQueryParams().forEach(redirectAttributes::addAttribute);
 
-        return "redirect:" + components.getPath();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json; charset=utf-8");
+        return new ResponseEntity<String>(response.toString(),
+                headers, HttpStatus.OK);
     }
+
 }

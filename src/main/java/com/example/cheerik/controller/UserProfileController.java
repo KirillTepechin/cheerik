@@ -89,7 +89,7 @@ public class UserProfileController {
                            Model model,
                            @AuthenticationPrincipal UserDetails userDetails) {
         var authUser = userService.findByLogin(userDetails.getUsername());
-        if(!authUser.getComments().contains(commentService.findComment(id))){
+        if(!authUser.getPosts().contains(postService.findPost(id))){
             throw new AccessDeniedException("Вы не являетесь автором поста");
         }
         model.addAttribute("postId", id);

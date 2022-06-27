@@ -38,8 +38,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage(LOGIN_URL).permitAll()
+                .and().rememberMe()
                 .and()
                 .logout().permitAll();
+
     }
 
     @Override

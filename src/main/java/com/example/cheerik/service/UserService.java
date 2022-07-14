@@ -3,10 +3,12 @@ package com.example.cheerik.service;
 import com.example.cheerik.dto.ReportStatsDto;
 import com.example.cheerik.dto.UserDto;
 import com.example.cheerik.model.User;
+import com.example.cheerik.repository.MessageRepository;
 import com.example.cheerik.repository.UserRepository;
 import com.example.cheerik.util.validation.ValidationException;
 import com.example.cheerik.util.validation.ValidatorUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -39,20 +42,18 @@ import com.ibm.icu.text.Transliterator;
 
 @Service
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final ValidatorUtil validatorUtil;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MessageRepository messageRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ValidatorUtil validatorUtil;
     @Value("${upload.path}")
     private String uploadPath;
     public static final String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       ValidatorUtil validatorUtil) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.validatorUtil = validatorUtil;
-    }
     public Page<ReportStatsDto> findReport(Pageable pageable) {
         return userRepository.findReport(pageable);
     }
@@ -96,7 +97,6 @@ public class UserService implements UserDetailsService {
 
             File newFile = new File(String.valueOf(destinationFile));
             newFile.renameTo(new File(uploadPath + "/" + resultFilename));
-
             user.setFilename(resultFilename);
         }
         return userRepository.save(user);
@@ -147,5 +147,14 @@ public class UserService implements UserDetailsService {
         Pattern pattern = Pattern.compile(regex);
         Matcher m = pattern.matcher(str);
         return m.find();
+    }
+
+    public List<UserDto> findChatsByUser(User currentUser) {
+        var messages = messageRepository.findAll();
+        for (var mes:
+             messages) {
+
+        }
+        return null;
     }
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+    <script type="text/javascript" src="/js/app.js" ></script>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script>
+      window.onload = function() {
+        var elem = document.getElementById("onload");
+        var to = elem.getAttribute("data-parameter1");
+        var from = elem.getAttribute("data-parameter2");
+
+        document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight
+
+        con(to,from);
+      };
+</script>
+</head>
+<body>
+<div id="onload" layout:fragment="content" th:data-parameter1="${to}" th:data-parameter2="${from}">
+    <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript
+        being
+        enabled. Please enable
+        Javascript and reload this page!</h2></noscript>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-striped">
+                <thead>
+                <tr>
+                    <th th:text="'Чат с '+ ${to}"></th>
+                </tr>
+                </thead>
+                <tbody id="greetings">
+                <tr th:each="message : ${messages}">
+                    <td th:switch="${message.getUserFilename()!=null}">
+                        <img th:case="true" th:src="@{${'/img/' + message.getUserFilename()}}" width="50px" height="50px" style="object-fit: cover;">
+                        <img th:case="false" src="/img/default.jpg" width="50px" height="50px">
+                    </td>
+                    <td th:text="${message.from}"/>
+                    <td th:text="${message.text}" width="80%"/>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-inline">
+                <div class="form-group">
+                    <input type="text" id="name" class="form-control" placeholder="Напишите сообщение...">
+                </div>
+                <button id="send" class="btn btn-default" type="submit">Отправить</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

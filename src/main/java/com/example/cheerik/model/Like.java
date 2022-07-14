@@ -14,6 +14,7 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
     @Version
     private Integer version;
 

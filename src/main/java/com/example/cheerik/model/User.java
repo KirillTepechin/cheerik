@@ -48,6 +48,9 @@ public class User{
     @JoinColumn(name = "user_id")
     private List<Comment> comments;
 
+    @OneToMany
+    @JoinColumn(name = "from_id")
+    private List<Message> messages;
     public User(@NotBlank(message = "Логин не может быть пустым!") String login,
                 @NotBlank(message = "Пароль не может быть пустым!") String password) {
         this.login = login;

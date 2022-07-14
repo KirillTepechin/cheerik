@@ -11,17 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.boot.configurationprocessor.json.*;
 
-import javax.validation.Valid;
-@Controller
+@RestController
 @RequestMapping("/like")
 public class LikeController {
 
@@ -34,8 +27,7 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
+    @PostMapping
     public ResponseEntity<String> like( @AuthenticationPrincipal UserDetails userDetails,
                                         @RequestBody String body) throws JSONException {
 

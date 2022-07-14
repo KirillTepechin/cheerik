@@ -1,9 +1,7 @@
 package com.example.cheerik.configuration;
 
-import com.example.cheerik.controller.UserSignupMvcController;
+import com.example.cheerik.controller.SignupController;
 import com.example.cheerik.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,7 +30,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers(UserSignupMvcController.SIGNUP_URL).permitAll()
+                .antMatchers(SignupController.SIGNUP_URL).permitAll()
                 .antMatchers(HttpMethod.GET, LOGIN_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()

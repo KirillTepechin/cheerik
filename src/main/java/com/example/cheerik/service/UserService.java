@@ -1,6 +1,5 @@
 package com.example.cheerik.service;
 
-import com.example.cheerik.dto.ReportStatsDto;
 import com.example.cheerik.dto.UserDto;
 import com.example.cheerik.model.User;
 import com.example.cheerik.repository.MessageRepository;
@@ -30,10 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,10 +49,6 @@ public class UserService implements UserDetailsService {
     @Value("${upload.path}")
     private String uploadPath;
     public static final String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
-
-    public Page<ReportStatsDto> findReport(Pageable pageable) {
-        return userRepository.findReport(pageable);
-    }
 
     public User findByLogin(String login) {
         return userRepository.findOneByLoginIgnoreCase(login);
@@ -151,10 +143,16 @@ public class UserService implements UserDetailsService {
 
     public List<UserDto> findChatsByUser(User currentUser) {
         var messages = messageRepository.findAll();
+        Set<User> userMessages = new HashSet<>();
         for (var mes:
              messages) {
-
+            if(mes.getFrom().equals(currentUser)){
+                userMessages.add(mes.getTo());
+            }
+            if(mes.getTo().equals(currentUser)){
+                userMessages.add(mes.getFrom());
+            }
         }
-        return null;
+        return userMessages.stream().map(UserDto::new).toList();
     }
 }

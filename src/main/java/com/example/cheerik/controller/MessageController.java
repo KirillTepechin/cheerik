@@ -14,9 +14,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class MessageController {
@@ -29,25 +28,14 @@ public class MessageController {
     @GetMapping("/chats")
     public String getChats(@AuthenticationPrincipal UserDetails userDetails,
                               Model model) {
-        /*TODO: доделать чаты, написать методы, красиво обернуть в один метод
         var currentUser = userService.findByLogin(userDetails.getUsername());
-        List<UserDto> chatUsers = userService.findChatsByUser(currentUser);
 
-        List<MessageDto> messageDtoList = new ArrayList<>();
-        for (var chatUser:
-             chatUsers) {
-            messageDtoList.add(messageService.findLastMessage(currentUser, chatUser));
-        }
-        HashMap<UserDto, MessageDto> chats = new HashMap<>();
-        for (int i = 0; i < messageDtoList.size(); i++) {
-            chats.put(chatUsers.get(i), messageDtoList.get(i));
-        }
+        var sortedChats = messageService.findChats(currentUser);
 
         model.addAttribute("user", currentUser);
-        model.addAttribute("chats", chats);
-        */
-        return "chats";
+        model.addAttribute("chats", sortedChats);
 
+        return "chats";
     }
 
     @GetMapping("/chat/{to}")

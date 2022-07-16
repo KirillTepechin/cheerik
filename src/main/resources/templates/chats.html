@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{default}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <h3>Чаты</h3>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="conversation" class="table table-stripped">
+                <tbody th:each="chat : ${chats}" th:data-parameter="${chat.key.login}" style="cursor: pointer;">
+                <tr>
+                    <td th:text="'Чат с '+ ${chat.key.login}"></td>
+                    <td th:switch="${chat.key.filename!=null}">
+                        <img th:case="true" th:src="@{${'/img/' + chat.key.filename}}" width="50px" height="50px"
+                             style="object-fit: cover;">
+                        <img th:case="false" src="/img/default.jpg" width="50px" height="50px">
+                    </td>
+                    <td width="80%"></td>
+                </tr>
+                <tr>
+                    <td th:switch="${chat.value.getUserFilename()!=null}">
+                        <img th:case="true" th:src="@{${'/img/' + chat.value.getUserFilename()}}" width="50px"
+                             height="50px" style="object-fit: cover;">
+                        <img th:case="false" src="/img/default.jpg" width="50px" height="50px">
+                    </td>
+                    <td th:text="${chat.value.from}" style="font-weight: bold"/>
+                    <td th:text="${chat.value.text}" width="80%"/>
+                <tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+<th:block layout:fragment="scripts">
+    <script>
+        $('tbody').on('click', function(e) {
+             var elem =e.currentTarget;
+             var to = elem.getAttribute("data-parameter");
+             document.location.href = "chat/"+to;
+});
+    </script>
+</th:block>
+
+</html>

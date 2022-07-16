@@ -32,10 +32,10 @@
                    th:classappend="${#strings.equals(activeLink, '/')} ? 'active' : ''">Главная</a>
                 <a class="nav-link" href="/profile"
                    th:classappend="${#strings.equals(activeLink, '/profile')} ? 'active' : ''">Мой профиль</a>
+                <a class="nav-link" href="/chats"
+                   th:classappend="${#strings.equals(activeLink, '/chats')} ? 'active' : ''">Сообщения</a>
                 <a class="nav-link" href="/users"
                    th:classappend="${#strings.equals(activeLink, '/users')} ? 'active' : ''">Пользователи</a>
-                <a class="nav-link" href="/reports/report-stats"
-                   th:classappend="${#strings.equals(activeLink, '//reports/report-stats')} ? 'active' : ''">Отчет по пользователям</a>
                 <a class="nav-link" href="/logout">
                     Выход (<span th:text="${#authentication.name}"></span>)
                 </a>

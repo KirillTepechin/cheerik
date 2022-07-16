@@ -28,8 +28,11 @@
     <div class="row">
         <div class="col-md-12">
             <table id="conversation" class="table table-striped">
-                <thead>
-                <tr>
+                <thead th:switch="${from == to}">
+                <tr th:case="true">
+                    <th th:text="'Чат с самим собой'"></th>
+                </tr>
+                <tr th:case="false">
                     <th th:text="'Чат с '+ ${to}"></th>
                 </tr>
                 </thead>
@@ -39,7 +42,7 @@
                         <img th:case="true" th:src="@{${'/img/' + message.getUserFilename()}}" width="50px" height="50px" style="object-fit: cover;">
                         <img th:case="false" src="/img/default.jpg" width="50px" height="50px">
                     </td>
-                    <td th:text="${message.from}"/>
+                    <td th:text="${message.from}" style="font-weight: bold"/>
                     <td th:text="${message.text}" width="80%"/>
                 </tr>
                 </tbody>

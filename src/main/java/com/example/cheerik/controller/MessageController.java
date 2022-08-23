@@ -5,14 +5,18 @@ import com.example.cheerik.dto.UserDto;
 import com.example.cheerik.service.MessageService;
 import com.example.cheerik.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.webjars.NotFoundException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,10 +44,13 @@ public class MessageController {
 
     @GetMapping("/chat/{to}")
     public String getMessages(@AuthenticationPrincipal UserDetails userDetails,@PathVariable String to,
-                           Model model) {
+                           Model model) throws ChangeSetPersister.NotFoundException {
 
         var currentUser = userService.findByLogin(userDetails.getUsername());
         var user = userService.findByLogin(to);
+        if(user == null){
+            throw new ChangeSetPersister.NotFoundException();
+        }
         var messages = messageService.findChatMessages(currentUser, user);
 
         model.addAttribute("messages", messages);
